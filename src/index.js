@@ -12,7 +12,17 @@ checkbox.forEach((elem) =>{
     }
   });
 });
-//console.log(checkbox);
-
 
 // end checkbox
+
+//cart
+
+const btnCart = document.getElementById('cart');
+const modalCart = document.querySelector('.cart');
+
+btnCart.addEventListener('click', () => {
+    modalCart.style.display = 'block';
+})
+
+
+//end cart
