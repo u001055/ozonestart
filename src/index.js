@@ -1,17 +1,16 @@
-
 // checkbox
 function toggleCheckbox() {
 
     const checkbox = document.querySelectorAll('.filter-check_checkbox');
 
-    checkbox.forEach((elem) =>{
-        elem.addEventListener('change', function(){
-        if (this.checked) {
-            this.nextElementSibling.classList.add('checked');
-        } else {
-            this.nextElementSibling.classList.remove('checked');
-        }
-    });
+    checkbox.forEach((elem) => {
+        elem.addEventListener('change', function () {
+            if (this.checked) {
+                this.nextElementSibling.classList.add('checked');
+            } else {
+                this.nextElementSibling.classList.remove('checked');
+            }
+        });
     });
 };
 
@@ -34,17 +33,17 @@ function toggleCart() {
         document.body.style.overflow = '';
     });
 };
-toggleCart();
+
 //end cart
 
 // add remove items
 
 function addCart() {
-        
+
     const cards = document.querySelectorAll('.goods .card'),
-    cartWrapper = document.querySelector('.cart-wrapper'),
-    cartEmpty = document.getElementById('cart-empty'),
-    countGoods = document.querySelector('.counter');
+        cartWrapper = document.querySelector('.cart-wrapper'),
+        cartEmpty = document.getElementById('cart-empty'),
+        countGoods = document.querySelector('.counter');
 
     cards.forEach((card) => {
         const btn = card.querySelector('button');
@@ -65,12 +64,12 @@ function addCart() {
 
     function showData() {
         const cardsCart = cartWrapper.querySelectorAll('.card'),
-        cardsPrice = cartWrapper.querySelectorAll('.card-price'),
-        cardTotal = document.querySelector('.cart-total span');
+            cardsPrice = cartWrapper.querySelectorAll('.card-price'),
+            cardTotal = document.querySelector('.cart-total span');
         let sum = 0;
         countGoods.textContent = cardsCart.length;
         cardsPrice.forEach((cardPrice) => {
-        sum += parseInt(cardPrice.textContent);
+            sum += parseInt(cardPrice.textContent);
         });
         cardTotal.textContent = sum;
         //console.log(cardsCart.length);
@@ -83,14 +82,31 @@ function addCart() {
 
     };
 };
-addCart();
-
-
 // end add remove items
 
 //filter hot sales
 
+function actionPage() {
+    const cards = document.querySelectorAll('.goods .card')
+    discountCheckbox = document.getElementById('discount-checkbox');
+    discountCheckbox.addEventListener('click', () => {
+        cards.forEach((card) => {
+            if (discountCheckbox.checked) {
+                if (!card.querySelector('.card-sale')) {
+                    card.parentNode.style.display = 'none';
+                }
+            } else {
+                card.parentNode.style.display = '';
+            };
+        });
+    });
 
+};
 
 
 //end filter hot sales
+
+toggleCheckbox();
+toggleCart();
+addCart();
+actionPage();
