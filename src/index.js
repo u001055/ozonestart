@@ -112,33 +112,33 @@ function actionPage() {
 
     function filter() {
         cards.forEach((card) => {
-                const cardPrice = card.querySelector('.card-price'),
-                    price = parseFloat(cardPrice.textContent);
-                if (((discountCheckbox.checked) && !card.querySelector('.card-sale')) || ((min.value && price < min.value) || (max.value && price > max.value))) {
+            const cardPrice = card.querySelector('.card-price'),
+                price = parseFloat(cardPrice.textContent);
+            if (((discountCheckbox.checked) && !card.querySelector('.card-sale')) || ((min.value && price < min.value) || (max.value && price > max.value))) {
                 card.parentNode.style.display = 'none';
             } else {
                 card.parentNode.style.display = '';
             }
 
         });
-};
+    };
 
-max.addEventListener('change', filter);
-min.addEventListener('change', filter);
+    max.addEventListener('change', filter);
+    min.addEventListener('change', filter);
 
-searchBtn.addEventListener('click', () => {
-    const searchText = new RegExp(search.value.trim(), 'i');
-    cards.forEach((card) => {
-        const title = card.querySelector('.card-title');
-        if (!searchText.test(title.textContent)) {
-            card.parentNode.style.display = 'none';
-        } else {
-            card.parentNode.style.display = '';
-        }
+    searchBtn.addEventListener('click', () => {
+        const searchText = new RegExp(search.value.trim(), 'i');
+        cards.forEach((card) => {
+            const title = card.querySelector('.card-title');
+            if (!searchText.test(title.textContent)) {
+                card.parentNode.style.display = 'none';
+            } else {
+                card.parentNode.style.display = '';
+            }
+        });
+
+
     });
-
-
-});
 
 };
 
@@ -150,25 +150,81 @@ searchBtn.addEventListener('click', () => {
 
 function getData() {
     const goodsWrapper = document.querySelector('.goods');
-    fetch('../db/db.json')
-    .then((response) => {
-        if (response.ok) {
-            console.log(response);
-        } else {
-            throw new Error ('Данные не были получены, ошибка:' + response.status);
-        }
-    })
-    .catch(err => {
-        console.warn(err);
-        goodsWrapper.innerHTML = '<div style=color:red>Errrror</div>';
-    })
+    return fetch('../db/db.json')
+        .then((response) => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Данные не были получены, ошибка:' + response.status);
+            }
+        })
+        .then(data => {
+            return data;
+        })
+        .catch(err => {
+            console.warn(err);
+            goodsWrapper.innerHTML = '<div style=color:red>Errrror</div>';
+        })
 }
 
 
+function renderCards(data) {
+    const goodsWrapper = document.querySelector('.goods');
+    data.goods.forEach(good => {
+        const card = document.createElement('div');
+        card.className = 'col-12 col-md-6 col-lg-4 col-xl-3';
+        card.innerHTML = `
+        <div class="card" data-category="${good.category}">
+            ${good.sale ? '<div class="card-sale">🔥Hot Sale🔥</div>' : ''}
+            <div class="card-img-wrapper">
+                <span class="card-img-top"
+                    style="background-image: url('${good.img}')"></span>
+            </div>
+            <div class="card-body justify-content-between">
+                <div class="card-price" style="${good.sale ? 'color:red' : ''}">${good.price} ₽</div>
+                <h5 class="card-title">${good.title}</h5>
+                <button class="btn btn-primary">В корзину</button>
+            </div>
+        </div>
+
+        `;
+        goodsWrapper.appendChild(card);
+    });
+}
+
+function renderCatalog() {
+    const cards = document.querySelectorAll('.goods .card'),
+        catalogList = document.querySelector('.catalog-list'),
+        catalogWrapper = document.querySelector('.catalog'),
+        catalogBtn = document.querySelector('.catalog-button'),
+        categories = new Set();
+
+    cards.forEach(card => {
+        categories.add(card.dataset.category);
+    });
+
+    categories.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        catalogList.appendChild(li);
+    });
+
+    catalogBtn.addEventListener('click', (event) => {
+        catalogWrapper.style.display = catalogWrapper.style.display ? '' : 'block';
+
+        if (event.target.tagName === 'LI') {
+            cards.forEach(card => card.parentNode.style.display = (card.dataset.category === event.target.textContent) ? '' : 'none');
+        }
+    });
+
+}
 // server data receive
 
-getData();
-toggleCheckbox();
-toggleCart();
-addCart();
-actionPage();
+getData().then(data => {
+    renderCards(data);
+    toggleCheckbox();
+    toggleCart();
+    addCart();
+    actionPage();
+    renderCatalog();
+});
