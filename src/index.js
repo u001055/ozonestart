@@ -84,7 +84,7 @@ function addCart() {
 };
 // end add remove items
 
-//filter hot sales
+//filter hot sales + price
 
 function actionPage() {
     const cards = document.querySelectorAll('.goods .card')
@@ -114,18 +114,12 @@ function actionPage() {
         cards.forEach((card) => {
                 const cardPrice = card.querySelector('.card-price'),
                     price = parseFloat(cardPrice.textContent);
-                if (discountCheckbox.checked) {
-                    if (!card.querySelector('.card-sale') || ((min.value && price < min.value) || (max.value && price > max.value))) {
-                        card.parentNode.style.display = 'none';
-                    } else {
-                        card.parentNode.style.display = '';
-                    }
-                } else if ((min.value && price < min.value) || (max.value && price > max.value)) {
-                    card.parentNode.style.display = 'none';
-                } else {
-                    card.parentNode.style.display = '';
-                }
-            
+                if (((discountCheckbox.checked) && !card.querySelector('.card-sale')) || ((min.value && price < min.value) || (max.value && price > max.value))) {
+                card.parentNode.style.display = 'none';
+            } else {
+                card.parentNode.style.display = '';
+            }
+
         });
 };
 
@@ -149,8 +143,31 @@ searchBtn.addEventListener('click', () => {
 };
 
 
-//end filter hot sales
+//end filter hot sales + price
 
+
+// server data receive
+
+function getData() {
+    const goodsWrapper = document.querySelector('.goods');
+    fetch('../db/db.json')
+    .then((response) => {
+        if (response.ok) {
+            console.log(response);
+        } else {
+            throw new Error ('Данные не были получены, ошибка:' + response.status);
+        }
+    })
+    .catch(err => {
+        console.warn(err);
+        goodsWrapper.innerHTML = '<div style=color:red>Errrror</div>';
+    })
+}
+
+
+// server data receive
+
+getData();
 toggleCheckbox();
 toggleCart();
 addCart();
