@@ -1,3 +1,5 @@
+let currentCategory = 'All';
+
 // checkbox
 function toggleCheckbox() {
 
@@ -11,6 +13,15 @@ function toggleCheckbox() {
                 this.nextElementSibling.classList.remove('checked');
             }
         });
+    });
+};
+
+function offCheckbox() {
+    const checkbox = document.querySelectorAll('.filter-check_checkbox'),
+        discountCheckbox = document.getElementById('discount-checkbox');
+    discountCheckbox.checked = false;
+    checkbox.forEach((elem) => {
+        elem.nextElementSibling.classList.remove('checked');
     });
 };
 
@@ -87,7 +98,7 @@ function addCart() {
 //filter hot sales + price
 
 function actionPage() {
-    const cards = document.querySelectorAll('.goods .card display')
+    const cards = document.querySelectorAll('.goods .card')
     discountCheckbox = document.getElementById('discount-checkbox'),
         min = document.getElementById('min'),
         max = document.getElementById('max'),
@@ -114,7 +125,7 @@ function actionPage() {
         cards.forEach((card) => {
             const cardPrice = card.querySelector('.card-price'),
                 price = parseFloat(cardPrice.textContent);
-            if (((discountCheckbox.checked) && !card.querySelector('.card-sale')) || ((min.value && price < min.value) || (max.value && price > max.value))) {
+            if (((discountCheckbox.checked) && !card.querySelector('.card-sale')) || ((min.value && price < min.value) || (max.value && price > max.value)) || ((card.dataset.category !== currentCategory) && (currentCategory !== 'All'))) {
                 card.parentNode.style.display = 'none';
             } else {
                 card.parentNode.style.display = '';
@@ -124,7 +135,18 @@ function actionPage() {
     };
 
     max.addEventListener('change', filter);
+    max.addEventListener('keydown', function (e) {
+        if (e.keyCode === 13) {
+            filter();
+        }
+    });
+
     min.addEventListener('change', filter);
+    min.addEventListener('keydown', function (e) {
+        if (e.keyCode === 13) {
+            filter();
+        }
+    });
 
     searchBtn.addEventListener('click', () => {
         const searchText = new RegExp(search.value.trim(), 'i');
@@ -212,9 +234,15 @@ function renderCatalog() {
 
     catalogBtn.addEventListener('click', (event) => {
         catalogWrapper.style.display = catalogWrapper.style.display ? '' : 'block';
-        console.log(event.target.textContent);
         if (event.target.tagName === 'LI') {
             cards.forEach(card => card.parentNode.style.display = (card.dataset.category === event.target.textContent) ? '' : 'none');
+            currentCategory = event.target.textContent;
+            const min = document.getElementById('min'),
+                max = document.getElementById('max');
+
+            offCheckbox();
+            min.value = '';
+            max.value = '';
         }
         if (event.target.textContent === 'All') {
             cards.forEach(card => card.parentNode.style.display = '');
@@ -225,9 +253,9 @@ function renderCatalog() {
 
 getData().then(data => {
     renderCards(data);
+    renderCatalog();
     toggleCheckbox();
     toggleCart();
     addCart();
     actionPage();
-    renderCatalog();
 });
