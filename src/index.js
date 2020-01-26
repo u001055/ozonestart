@@ -87,7 +87,7 @@ function addCart() {
 //filter hot sales + price
 
 function actionPage() {
-    const cards = document.querySelectorAll('.goods .card')
+    const cards = document.querySelectorAll('.goods .card display')
     discountCheckbox = document.getElementById('discount-checkbox'),
         min = document.getElementById('min'),
         max = document.getElementById('max'),
@@ -202,6 +202,7 @@ function renderCatalog() {
     cards.forEach(card => {
         categories.add(card.dataset.category);
     });
+    categories.add('All');
 
     categories.forEach(item => {
         const li = document.createElement('li');
@@ -211,12 +212,14 @@ function renderCatalog() {
 
     catalogBtn.addEventListener('click', (event) => {
         catalogWrapper.style.display = catalogWrapper.style.display ? '' : 'block';
-
+        console.log(event.target.textContent);
         if (event.target.tagName === 'LI') {
             cards.forEach(card => card.parentNode.style.display = (card.dataset.category === event.target.textContent) ? '' : 'none');
         }
+        if (event.target.textContent === 'All') {
+            cards.forEach(card => card.parentNode.style.display = '');
+        }
     });
-
 }
 // server data receive
 
