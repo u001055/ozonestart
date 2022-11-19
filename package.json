@@ -19,6 +19,6 @@
   "homepage": "https://github.com/u001055/ozonestart#readme",
   "devDependencies": {
     "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.12"
   }
 }
